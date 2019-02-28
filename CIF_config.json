@@ -1,0 +1,130 @@
+{
+    "Manufacturer": "Siemens",
+    "ManufacturersModelName": "Verio",
+    "InstitutionName": "ICCIF",
+	"InstitutionAddress": "Du_Cane_Road_StreetNo_London_District_GB_W12_0NN",
+	"DeviceSerialNumber": "40436",
+    "SoftwareVersions": "syngo_MR_B19",
+    "MagneticFieldStrength": 3,
+    "descriptions": [
+        {
+            "dataType": "anat",
+            "modalityLabel": "T2w",
+            "criteria": {
+                "SeriesDescription": "*t2_tirm_tra_dark-fluid*"
+            }
+        },
+        {
+            "dataType": "anat",
+            "modalityLabel": "T1w",
+            "criteria": {
+                "SeriesDescription": "*MPRAGE*"
+            }
+        },
+        {
+            "dataType": "anat",
+            "modalityLabel": "swi",
+            "customLabels": "SWI",
+            "criteria": {
+                "SeriesDescription": "*SWI_Images*"
+            }
+        },
+        {
+            "dataType": "anat",
+            "modalityLabel": "mIP",
+            "customLabels": "mIP",
+            "criteria": {
+                "SeriesDescription": "*mIP_*"
+            }
+        },
+        {
+            "dataType": "anat",
+            "modalityLabel": "tfl",
+            "customLabels": "tfl",
+            "criteria": {
+                "SeriesDescription": "*tfl_wip944*"
+            }
+        },
+        {
+            "dataType": "anat",
+            "modalityLabel": "fieldMap",
+            "customLabels": "fieldMap",
+            "criteria": {
+                "SeriesDescription": "*field_map*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "bold",
+            "customLabels": "task-rest",
+            "criteria": {
+                "SeriesDescription": "*RestingState*"
+            }
+        },
+        {
+            "dataType": "dwi",
+            "modalityLabel": "dti",
+            "criteria": {
+                "SeriesDescription": "*DTI_RG_FS_64dir_w4b0_2x2x2*"
+            }
+        },
+        {
+            "dataType": "dwi",
+            "modalityLabel": "msdwi",
+            "criteria": {
+                "SeriesDescription": "*NODDI*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "fmap",
+            "criteria": {
+                "SeriesDescription": "*field*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "crt0",
+            "criteria": {
+                "SeriesDescription": "*CRT0*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "crt1",
+            "criteria": {
+                "SeriesDescription": "*CRT1*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "sst1a",
+            "criteria": {
+                "SeriesDescription": "*SST1A*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "sst1b",
+            "criteria": {
+                "SeriesDescription": "*SST1B*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "pasl",
+            "criteria": {
+                "SeriesDescription": "*pasl*"
+            }
+        },
+        {
+            "dataType": "func",
+            "modalityLabel": "asl",
+            "customLabels": "task-rest",
+            "criteria": {
+                "SeriesDescription": "*ep2d_tra_pasl_p2*"
+            }
+        }
+
+    ]
+}
