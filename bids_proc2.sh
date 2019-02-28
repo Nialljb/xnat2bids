@@ -1,0 +1,103 @@
+Usage() {
+  cat <<EOF
+    ___________ _   ____
+   / ____|__  // | / / /
+  / /     /_ </  |/ / /
+ / /___ ___/ / /|  / /___
+ \____//____/_/ |_/_____/
+
+ Niall J. Bourke Imperial College London Feb 2019
+ n.bourke@imperial.ac.uk
+ v2.0 
+
+
+usage:  bids_proc.sh -i <project_ID>
+
+e.g. bids_proc.sh -i DREAM
+
+* Check output from preproc step
+* Subjects should be labled by their CIF ID
+* Scanning sessions should be inside the CID ID level
+* Meta data regarding scan sessions and dates should be saved to a json.
+
+EOF
+  exit 1
+}
+
+if [  $# -le 1 ];
+  then
+  Usage
+  exit 1
+ fi
+
+while [ $# -ge 1 ];
+do
+  case "$1" in
+
+		-i)
+					project=$2;
+					shift;;
+
+  esac
+  shift
+done
+
+
+  echo " Input job = $project "
+
+# Initial Setup
+module load mricogl
+dependencies=/rds/general/projects/c3nl_shared/live/dependencies
+config=/rds/general/project/c3nl_shared/live/dependencies/CIF_config.json
+wd=/rds/general/project/c3nl_djs_imaging_data/live/data/raw/
+out=/rds/general/project/c3nl_djs_imaging_data/live/data/
+
+echo "" > $wd/jobs/bids_${project}.txt
+
+cd ${wd}/${project}
+
+# Loop over data
+for subject in `ls -d ${wd}/${project}/*/`; do
+  sub=`basename $subject`
+  echo "organising: $sub ... "
+
+  for session in `ls -d ${wd}/${project}/${sub}/*/`; do
+    sesh=`basename $session`
+    echo "in session: $sesh"
+
+    for sequence in `ls -d ${wd}/${project}/${sub}/${sesh}/scans/*/`; do
+    scan=`basename $sequence`
+    mkdir -p ${wd}/${project}/${sub}/${sesh}/${scan}/DICOM
+    mv ${wd}/${project}/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/* ${wd}/${project}/${sub}/${sesh}/${scan}/DICOM/
+
+    dcm2niix ${wd}/${project}/${sub}/${sesh}/${scan}
+
+    for key in $(cat $config | jq '.descriptions | to_entries[] | .key'); do
+      sd=$(cat $config | jq -r '.descriptions['$key'].criteria.SeriesDescription');
+
+      #Match data with index file
+      if [[ $scan = $sd ]]; then
+        dt=$(cat $config | jq -r '.descriptions['$key'].dataType')
+        ml=$(cat $config | jq -r '.descriptions['$key'].modalityLabel')
+
+        mkdir -p ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/
+
+        for scanData in `ls ${wd}/${project}/${sub}/${sesh}/${scan}/`; do
+          sdata=`basename $scanData`
+          suf=$(echo ${sdata##*.})
+
+          for zz in `ls ${wd}/${project}/${sub}/${sesh}/${scan}/*.${suf}`; do
+          cp ${zz} ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${ml}.${suf}
+          done
+        done
+
+      continue
+      fi
+      done
+
+    done
+  done
+done
+
+
+# hpcSubmit.sh $wd/jobs/bids_${project}.txt 01:00:00 6 2GB
