@@ -16,9 +16,10 @@
          /rds/general/project/c3nl_djs_imaging_data/live/data
          
          Inside data:
-         /raw/projects/sessions/data/
-         /sourcedata/cifIDs/sessions/scans/data/
-         /derivatives/
+         /indexFiles/files*
+         /raw/projects/sessions/data*
+         /sourcedata/cifIDs/sessions/scans/data*
+         /derivatives/processedData*
          tbi_project_list.csv
 
 Running the xnatDownloader notebook will download zipped data into the raw imaging directory with the project label given. In the imaging directory there is a folder called indexFiles. This needs to contain an indexing file, downloadable from xnat (some python lover might be able to do this as part of the downloader script - I have only managed this locally with XDC). From here bids_1_preproc should run smoothly.. Check this output and all files have downloaded as expected. bids_2_proc can then be run which will format all the data in the bids format in the sourcedata directory with the CIF number as the participant ID and the session ID as the scan session. metaData containing the scan dates will be saved within each session directory. 
