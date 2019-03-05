@@ -14,6 +14,8 @@
 #### Structure 
 
          /rds/general/project/c3nl_djs_imaging_data/live/data
+         
+         Inside data:
          /raw/projects/sessions/data/
          /sourcedata/cifIDs/sessions/scans/data/
          /derivatives/
