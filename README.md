@@ -9,11 +9,11 @@
 2. bids_1_preproc - unzip and label correctly at project level in raw directory. 
 3. bids_2_proc - arrange in bids format in combined sourcedirectory.
 
-* Requires an indexing file in order to match CIF numbers, scan sessisons etc. I have added these to an indexFiles directory for a number of compleated projects. This can be updated through xnat data client (XDC) with new data. However this will need to be set up locally and can be a bit of a pain. Alternativly it may be possible to to manually download this from the xnat site. 
+* Requires an indexing file in order to match CIF numbers, scan sessisons etc. I have added these to an indexFiles directory for a number of compleated projects. This can be updated through xnat data client (XDC) with new data. However this will need to be set up locally and can be a bit of a pain. Alternativly it may be possible to to manually download this from the xnat site. Feel free to check with me about this. 
 
 ## CIF_config.json
 For all new aquisition types, this needs to be added into the config file in order to be collected and ordered correctly. 
-For exmaple if I start collecting a new functional scan called "learningCurves" I need to add this and label it as being a functional task. 
+For example if I start collecting a new functional scan called "learningCurves" I need to add this and label it as being a functional task. Please don't edit directly in the dependencies directoy. Download from here and check edit works before replacing dependency file. 
 
 - dataType is the modality of scan (structural, functional etc.)  
 - modality label is the name you want to assign the aquisition (t1, dti, rest, etc. )
