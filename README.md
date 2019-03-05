@@ -11,7 +11,7 @@
 
 * Requires an indexing file in order to match CIF numbers, scan sessisons etc. I have added these to an indexFiles directory for a number of compleated projects. This can be updated through xnat data client (XDC) with new data. However this will need to be set up locally and can be a bit of a pain. Alternativly it may be possible to to manually download this from the xnat site. 
 
-## CIF_config
+## CIF_config.json
 For all new aquisition types, this needs to be added into the config file in order to be collected and ordered correctly. 
 For exmaple if I start collecting a new functional scan called "learningCurves" I need to add this and label it as being a functional task. 
 
