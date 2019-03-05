@@ -1,6 +1,6 @@
 # xnat2bids
 
-* The bids function are in the dependencies directory on the cluster. If this is in you path (added to .bash_profile) then they can be called by just typing
+* The bids function are in the dependencies directory on the cluster. If this is in your path (added to .bash_profile) then they can be called by just typing
 
          bids_1_preproc -i projectName 
 
