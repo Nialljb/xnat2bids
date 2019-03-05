@@ -1,3 +1,5 @@
+#!/bin/sh
+
 Usage() {
   cat <<EOF
     ___________ _   ____
@@ -8,7 +10,7 @@ Usage() {
 
  Niall J. Bourke Imperial College London Feb 2019
  n.bourke@imperial.ac.uk
- v2.0 
+ v2.0 (dcm2bids sucked so I did it myself)
 
 
 usage:  bids_proc.sh -i <project_ID>
@@ -84,7 +86,7 @@ for subject in `ls -d ${wd}/${project}/*/`; do
 
         for scanData in `ls ${wd}/${project}/${sub}/${sesh}/${scan}/`; do
           sdata=`basename $scanData`
-          suf=$(echo ${sdata##*.})
+          suf=$(echo $sdata | cut -d'.' -f2,3)
 
           for zz in `ls ${wd}/${project}/${sub}/${sesh}/${scan}/*.${suf}`; do
           cp ${zz} ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${ml}.${suf}
@@ -94,10 +96,10 @@ for subject in `ls -d ${wd}/${project}/*/`; do
       continue
       fi
       done
-
+      
     done
+    # copy metaData
+    cp ${wd}/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
   done
 done
 
-
-# hpcSubmit.sh $wd/jobs/bids_${project}.txt 01:00:00 6 2GB
