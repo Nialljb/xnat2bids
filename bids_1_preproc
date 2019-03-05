@@ -1,3 +1,5 @@
+#!/bin/sh
+
 Usage() {
   cat <<EOF
     ___________ _   ____
@@ -14,8 +16,7 @@ usage:  bids_preproc.sh -i <project_ID>
 
 e.g. bids_preproc.sh -i DREAM
 
-* This function assumes data has been downloaded with the xnat data downloader notebook.
-* Ensure csv files with indexing information is in project folder
+*This function assumes data has been downloaded with the xnat data downloader notebook.
 
 EOF
   exit 1
@@ -43,7 +44,7 @@ done
   echo " Input job = $project "
 
 wd=/rds/general/project/c3nl_djs_imaging_data/live/data/raw/
-out=/rds/general/project/c3nl_djs_imaging_data/live/data/
+out=/rds/general/project/c3nl_djs_imaging_data/live/data
 cd ${wd}/${project}
 
 for ii in `ls *.zip`; do
@@ -54,45 +55,42 @@ for ii in `ls *.zip`; do
     sid="$(echo $ii | cut -d'_' -f3)"
     eid="$(echo $ii | cut -d'_' -f5)"
 
-    SID="${scanner}_${sid}"
-    EID="${scanner}_${eid}"
+    SID="${scanner}_${sid}"; 
+    EID="${scanner}_${eid}";
 
     # Loop over subject indexing file
     INPUT=${out}/indexFiles/${project}_subject.csv
-    [ ! -f $INPUT] && {echo "$INPUT file not found"}
+    [ ! -f $INPUT ] && {echo "$INPUT file not found"}
 
         while IFS="," read c1 c2 c3 c4 c5 c6
         do
-
+	
         # Match data with index file
         if [[ $SID = $c1 ]]; then
-
+	
         [[ -d $c3 ]] || mkdir $c3
         mv $ii $c3
         unzip $c3/$ii -d $c3
         cifid=$c3
-
-        JSON='{"cif id": "'"$SID"'"}'
-        printf '%s\n' "$JSON" >> $cifid/metaData.json
+	echo "processing $cifid ..."
         fi
-        done < $INPUT
+        done < "$INPUT"
 
 
     # Loop over experiment indexing file
     INPUT2=${out}/indexFiles/${project}_experiments.csv
-    [ ! -f $INPUT2] && {echo "$INPUT file not found"}
+    [ ! -f $INPUT2 ] && {echo "$INPUT file not found"}
 
         while IFS="," read c1 c2 c3 c4 c5 c6 c7 c8
         do
         # Match data with index file
         if [[ $EID = $c1 ]]; then
         JSON='{"'"$c6"'": "'"$c4"'"}'
-        printf '%s\n' "$JSON" >> $cifid/metaData.json
+        printf '%s\n' "$JSON" >> $cifid/$c6/metaData-${c6}.json
+        xx=$(cat $cifid/${c6}/metaData-${c6}.json | jq -r ' .[]')
+        mv $cifid/${c6} $cifid/${xx}-${c6}
         fi
-        done < $INPUT2
+        done < "$INPUT2"
 
 echo "processed $cifid"
 done
-
-# Couldnt get this this to work to format json in a nice format
-#JSON=\''{"'"$c6"'": "'"$c4"'"}'\' | python -m json.tool
