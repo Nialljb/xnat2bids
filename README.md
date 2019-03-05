@@ -2,7 +2,7 @@
 
 * The bids function are in the dependencies directory on the cluster. If this is in you path (added to .bash_profile) then they can be called by just typing
 
-{ bids_1_preproc -i projectName }
+         bids_1_preproc -i projectName 
 
 ## Steps
 1. Run xnat downloader script to pull project data into the imaging directory. 
