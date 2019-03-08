@@ -10,7 +10,7 @@ Usage() {
 
  Niall J. Bourke Imperial College London Feb 2019
  n.bourke@imperial.ac.uk
- v2.0 (dcm2bids sucked so I did it myself)
+ v2.0 
 
 
 usage:  bids_proc.sh -i <project_ID>
@@ -103,3 +103,6 @@ for subject in `ls -d ${wd}/${project}/*/`; do
   done
 done
 
+# Give Dave's group permissions
+chgrp -R rds-000182 ${out}/sourcedata/*
+chmod -R +rwx ${out}/sourcedata/*
