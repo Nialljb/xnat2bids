@@ -17,6 +17,13 @@ usage:  bids_preproc.sh -i <project_ID>
 e.g. bids_preproc.sh -i DREAM
 
 *This function assumes data has been downloaded with the xnat data downloader notebook.
+*Working directory is currently hardcoded for TBI data 
+*Doesnt like study names to include "_" as it takes the string before the first "_" as the study ID
+*May have resolved the above..
+* Low resources required - can run on head node, recomend submitting if a large project - 2GB Mem, 1CPU should be sufficiant 
+
+
+
 
 EOF
   exit 1
