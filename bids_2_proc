@@ -10,12 +10,12 @@ Usage() {
 
  Niall J. Bourke Imperial College London Feb 2019
  n.bourke@imperial.ac.uk
- v2.0 
+ v2.1 (04/07/2019)
 
 
-usage:  bids_proc.sh -i <project_ID>
+usage:  bids_2_proc -i <project_ID> -c <config.json>
 
-e.g. bids_proc.sh -i DREAM
+e.g. bids_2_proc -i DREAM -c CIF_congig.json
 
 * Check output from preproc step
 * Subjects should be labled by their CIF ID
@@ -26,18 +26,19 @@ EOF
   exit 1
 }
 
-if [  $# -le 1 ];
+if [  $# -le 3 ];
   then
   Usage
   exit 1
  fi
 
-while [ $# -ge 1 ];
+while [ $# -ge 3 ];
 do
   case "$1" in
 
 		-i)
 					project=$2;
+          con=$4
 					shift;;
 
   esac
@@ -49,12 +50,19 @@ done
 
 # Initial Setup
 module load mricogl
-dependencies=/rds/general/projects/c3nl_shared/live/dependencies
-config=/rds/general/project/c3nl_shared/live/dependencies/CIF_config.json
+dependencies=/rds/general/project/c3nl_shared/live/dependencies
+config=${dependencies}/${con}
+
+### HARDCODED ###
 wd=/rds/general/project/c3nl_djs_imaging_data/live/data/raw/
 out=/rds/general/project/c3nl_djs_imaging_data/live/data/
-
+### MAKE BETTER ###
 echo "" > $wd/jobs/bids_${project}.txt
+
+echo "project is $project"
+echo "config is $config"
+echo "walltime is $walltime"
+
 
 cd ${wd}/${project}
 
@@ -81,6 +89,7 @@ for subject in `ls -d ${wd}/${project}/*/`; do
       if [[ $scan = $sd ]]; then
         dt=$(cat $config | jq -r '.descriptions['$key'].dataType')
         ml=$(cat $config | jq -r '.descriptions['$key'].modalityLabel')
+        cl=$(cat $config | jq -r '.descriptions['$key'].customLabels')
 
         mkdir -p ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/
 
@@ -89,20 +98,16 @@ for subject in `ls -d ${wd}/${project}/*/`; do
           suf=$(echo $sdata | cut -d'.' -f2,3)
 
           for zz in `ls ${wd}/${project}/${sub}/${sesh}/${scan}/*.${suf}`; do
-          cp ${zz} ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${ml}.${suf}
+          cp ${zz} ${out}/sourcedata/sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${cl}.${suf}
           done
         done
 
       continue
       fi
       done
-      
+
     done
     # copy metaData
     cp ${wd}/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
   done
 done
-
-# Give Dave's group permissions
-chgrp -R rds-000182 ${out}/sourcedata/*
-chmod -R +rwx ${out}/sourcedata/*
