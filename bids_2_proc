@@ -61,7 +61,6 @@ echo "" > $wd/jobs/bids_${project}.txt
 
 echo "project is $project"
 echo "config is $config"
-echo "walltime is $walltime"
 
 
 cd ${wd}/${project}
@@ -111,3 +110,6 @@ for subject in `ls -d ${wd}/${project}/*/`; do
     cp ${wd}/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
   done
 done
+
+# Share the data love
+chmod -R +rwx ${out}/sourcedata/*
