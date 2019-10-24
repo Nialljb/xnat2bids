@@ -6,11 +6,11 @@
 
 ## Steps
 1. Run xnat downloader script to pull project data into the imaging directory. 
-2. Download indexing files via XDC into /raw/indexFiles/*
-2. bids_1_preproc - unzip and label correctly at project level in raw directory. 
-3. bids_2_proc - arrange in bids format in combined sourcedirectory.
+2. Download indexing files via XDC into /data/indexFiles/*
+3. bids_1_preproc - unzip and label correctly at project level in raw directory. 
+4. bids_2_proc - arrange in bids format in combined sourcedirectory.
 
-* Requires an indexing file in order to match CIF numbers, scan sessisons etc. I have added these to an indexFiles directory for a number of compleated projects. This can be updated through xnat data client (XDC) with new data. However this will need to be set up locally and can be a bit of a pain. Alternativly it may be possible to to manually download this from the xnat site. Feel free to check with me about this. 
+*Requires an indexing file in order to match CIF numbers, scan sessisons etc. I have added these to an indexFiles directory for a number of compleated projects. This can be updated through xnat data client (XDC) with new data. However this will need to be set up locally and can be a bit of a pain. Alternativly it may be possible to to manually download this from the xnat site. Feel free to check with me about this. 
 
 #### Structure 
 
