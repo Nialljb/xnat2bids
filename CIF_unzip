@@ -1,0 +1,85 @@
+#!/bin/sh
+
+Usage() {
+  cat <<EOF
+    ___________ _   ____
+   / ____|__  // | / / /
+  / /     /_ </  |/ / /
+ / /___ ___/ / /|  / /___
+ \____//____/_/ |_/_____/
+
+ Niall J. Bourke Imperial College London Oct 2021
+ n.bourke@imperial.ac.uk
+
+usage:  CIF_unzip -i <project_ID>
+
+e.g. CIF_unzip -i DREAM
+
+## README ##
+*This function assumes data has been downloaded with the xnat data downloader notebook and compressed data is sitting in
+/rds/general/project/c3nl_djs_imaging_data/ephemeral
+(Working directory is currently hardcoded for ephermeral)
+
+*Doesnt like study names to include "_" as it takes the string before the first "_" as the study ID
+
+* Low resources required - can run on head node, recomend submitting if a large project - 2GB Mem, 1CPU should be sufficiant
+
+##
+
+EOF
+  exit 1
+}
+
+if [  $# -le 1 ];
+  then
+  Usage
+  exit 1
+ fi
+
+while [ $# -ge 1 ];
+do
+  case "$1" in
+
+		-i)
+					project=$2;
+					shift;;
+
+  esac
+  shift
+done
+
+echo " Input job = $project "
+
+### EDIT HERE ###
+wd=/rds/general/project/c3nl_djs_working_dir/ephemeral/${project}
+INDEX=${wd}/${project}_subject.csv
+### END EDIT ###
+
+cd ${wd}
+for ii in `ls *.zip`;
+  do
+  echo "Extracting: $ii"
+  # Gather labels - This keeps chaning and is really * anoying
+  study="$(echo $ii | cut -d'_' -f1)"
+  scanner="$(echo $ii | cut -d'_' -f2)"
+  sid="$(echo $ii | cut -d'_' -f3)"
+  SID="${scanner}_${sid}";
+  echo "sid is ${SID}"
+
+  # Loop over subject indexing file
+  [ ! -f $INDEX ] && {echo "$INDEX file not found"}
+      echo "input 1: $INDEX"
+
+      while IFS="," read c1 c2 c3 c4 c5 c6
+        do
+        # Match data with index file
+        if [[ $SID = $c1 ]]; then
+          [[ -d ${wd}/${project}/${c3} ]] || mkdir -p ${wd}/${project}/${c3}
+          echo "c3 is ${c3}"
+          echo "processing ${c3}..."
+          mv ${wd}/${project}/${ii} ${wd}/${project}/${c3}
+          unzip -qq ${wd}/${project}/${c3}/${ii} -d ${wd}/${project}/${c3}
+          echo "Extracted ${c3}"
+        fi
+      done < "$INDEX"
+done
