@@ -10,6 +10,9 @@ Usage() {
 
  Niall J. Bourke Imperial College London Oct 2021
  n.bourke@imperial.ac.uk
+ 
+ V1.2
+ Version to for study labels that are prefixed with Study__
 
 usage:  CIF_unzip -i <project_ID>
 
@@ -55,14 +58,16 @@ wd=/rds/general/project/c3nl_djs_working_dir/ephemeral/${project}
 INDEX=${wd}/${project}_subject.csv
 ### END EDIT ###
 
+# Study__PCNORAD_CIF3_S00234_CIF3_E03686_scans_ALL.zip
+
 cd ${wd}/raw
 for ii in `ls *.zip`;
   do
   echo "Extracting: $ii"
   # Gather labels - This keeps changing and is really * annoying
-  study="$(echo $ii | cut -d'_' -f1)"
-  scanner="$(echo $ii | cut -d'_' -f2)"
-  sid="$(echo $ii | cut -d'_' -f3)"
+  study="$(echo $ii | cut -d'_' -f2)" # 1
+  scanner="$(echo $ii | cut -d'_' -f4)" # 2
+  sid="$(echo $ii | cut -d'_' -f5)" # 3
   SID="${scanner}_${sid}";
   echo "sid is ${SID}"
 
@@ -77,7 +82,7 @@ for ii in `ls *.zip`;
           [[ -d ${wd}/raw/${c3} ]] || mkdir -p ${wd}/raw/${c3}
           echo "c3 is ${c3}"
           echo "processing ${c3}..."
-          mv ${wd}/raw/${ii} ${wd}/raw/${c3}
+          mv ${wd}/raw/${ii} ${wd}/raw/${c3}/
           unzip -qq ${wd}/raw/${c3}/${ii} -d ${wd}/raw/${c3}
           echo "Extracted ${c3}"
         fi

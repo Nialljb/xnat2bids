@@ -12,6 +12,9 @@ Usage() {
  n.bourke@imperial.ac.uk
  v2.2 (July 2020)
  v2.3 (Oct 2021)
+ 
+ 
+ **AMMENDED for "Study__"
 
 usage:  bids_2_proc -i <project_ID> -c <config.json>
 
@@ -81,7 +84,7 @@ for subject in `ls -d ${wd}/${project}/raw/*/`;
             do
             scan=`basename $sequence`
             mkdir -p ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/
-            #mv ${wd}/${project}/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/* ${wd}/${project}/raw/${sub}/${sesh}/${scan}/DICOM/
+            #mv ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/* ${wd}/${project}/raw/${sub}/${sesh}/${scan}/DICOM/
             echo "scan is $scan"
             FILE=`ls -f ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/*.nii`;
             if [ -f "$FILE" ]; then
@@ -120,7 +123,7 @@ for subject in `ls -d ${wd}/${project}/raw/*/`;
             done
             #continue
             #copy metaData
-            #cp ${wd}/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
+            cp ${wd}/${project}/raw/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
             #fi
         done
     done
