@@ -17,8 +17,7 @@ e.g. CIF_unzip -i DREAM
 
 ## README ##
 *This function assumes data has been downloaded with the xnat data downloader notebook and compressed data is sitting in
-/rds/general/project/c3nl_djs_imaging_data/ephemeral
-(Working directory is currently hardcoded for ephermeral)
+/rds/general/project/c3nl_djs_imaging_data/live/data/raw
 
 *Doesnt like study names to include "_" as it takes the string before the first "_" as the study ID
 
@@ -48,38 +47,59 @@ do
   shift
 done
 
+
 echo " Input job = $project "
 
-### EDIT HERE ###
-wd=/rds/general/project/c3nl_djs_working_dir/ephemeral/${project}
-INDEX=${wd}/${project}_subject.csv
-### END EDIT ###
+wd=/rds/general/project/c3nl_djs_imaging_data/live/data/raw/
+out=/rds/general/project/c3nl_djs_imaging_data/live/data
+cd ${wd}/${project}
 
-cd ${wd}/raw
-for ii in `ls *.zip`;
-  do
-  echo "Extracting: $ii"
-  # Gather labels - This keeps changing and is really * annoying
+for ii in `ls *.zip`; do
+
+  # Gather labels
   study="$(echo $ii | cut -d'_' -f1)"
   scanner="$(echo $ii | cut -d'_' -f2)"
   sid="$(echo $ii | cut -d'_' -f3)"
+  eid="$(echo $ii | cut -d'_' -f5)"
+
   SID="${scanner}_${sid}";
-  echo "sid is ${SID}"
+  EID="${scanner}_${eid}";
 
   # Loop over subject indexing file
-  [ ! -f $INDEX ] && {echo "$INDEX file not found"}
-      echo "input 1: $INDEX"
+  INPUT=${out}/indexFiles/${project}_subject.csv
+  [ ! -f $INPUT ] && {echo "$INPUT file not found"}
 
       while IFS="," read c1 c2 c3 c4 c5 c6
-        do
-        # Match data with index file
-        if [[ $SID = $c1 ]]; then
-          [[ -d ${wd}/raw/${c3} ]] || mkdir -p ${wd}/raw/${c3}
-          echo "c3 is ${c3}"
-          echo "processing ${c3}..."
-          mv ${wd}/raw/${ii} ${wd}/raw/${c3}
-          unzip -qq ${wd}/raw/${c3}/${ii} -d ${wd}/raw/${c3}
-          echo "Extracted ${c3}"
-        fi
-      done < "$INDEX"
+      do
+
+      # Match data with index file
+      if [[ $SID = $c1 ]]; then
+
+      [[ -d $c3 ]] || mkdir $c3
+      mv $ii $c3
+      unzip -qq $c3/$ii -d $c3
+      cifid=$c3
+echo "processing $cifid ..."
+      fi
+      done < "$INPUT"
+
+
+  # Loop over experiment indexing file to get metadata
+  INPUT2=${out}/indexFiles/${project}_experiments.csv
+  [ ! -f $INPUT2 ] && {echo "$INPUT file not found"}
+
+      while IFS="," read c1 c2 c3 c4 c5 c6 c7 c8
+      do
+      # Match data with index file
+      if [[ $EID = $c1 ]]; then
+      JSON='{"'"$c6"'": "'"$c4"'"}'
+      printf '%s\n' "$JSON" >> $cifid/$c6/metaData-${c6}.json
+      xx=$(cat $cifid/${c6}/metaData-${c6}.json | jq -r ' .[]')
+      echo ${xx}
+      mv $cifid/${c6} $cifid/${xx}-${c6}
+      fi
+      done < "$INPUT2"
+
+echo "processed $cifid"
 done
+

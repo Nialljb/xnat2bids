@@ -13,5 +13,4 @@ Dependencies
 - File structures/paths changed on xnat causing issues
     - This may result in altered versions based on projects
     - i.e. those with prefix Study__ 
-- Update to py3.7 in process
 - If submitting as job make sure env is sourced (to ensure dependencies are called i.e. jq)

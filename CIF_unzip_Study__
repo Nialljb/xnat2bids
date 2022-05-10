@@ -20,8 +20,7 @@ e.g. CIF_unzip -i DREAM
 
 ## README ##
 *This function assumes data has been downloaded with the xnat data downloader notebook and compressed data is sitting in
-/rds/general/project/c3nl_djs_imaging_data/ephemeral
-(Working directory is currently hardcoded for ephermeral)
+/rds/general/project/c3nl_djs_imaging_data/data/raw
 
 *Doesnt like study names to include "_" as it takes the string before the first "_" as the study ID
 
@@ -54,17 +53,17 @@ done
 echo " Input job = $project "
 
 ### EDIT HERE ###
-wd=/rds/general/project/c3nl_djs_working_dir/ephemeral/${project}
-INDEX=${wd}/${project}_subject.csv
+wd=/rds/general/project/c3nl_djs_imaging_data/live/data
+INDEX=${wd}/indexFiles/${project}_subject.csv
 ### END EDIT ###
 
 # Study__PCNORAD_CIF3_S00234_CIF3_E03686_scans_ALL.zip
 
-cd ${wd}/raw
+cd ${wd}/raw/${project}
 for ii in `ls *.zip`;
   do
   echo "Extracting: $ii"
-  # Gather labels - This keeps changing and is really * annoying
+  # Gather labels
   study="$(echo $ii | cut -d'_' -f2)" # 1
   scanner="$(echo $ii | cut -d'_' -f4)" # 2
   sid="$(echo $ii | cut -d'_' -f5)" # 3
@@ -79,11 +78,11 @@ for ii in `ls *.zip`;
         do
         # Match data with index file
         if [[ $SID = $c1 ]]; then
-          [[ -d ${wd}/raw/${c3} ]] || mkdir -p ${wd}/raw/${c3}
+          [[ -d ${wd}/raw/${project}/${c3} ]] || mkdir -p ${wd}/raw/${project}/${c3}
           echo "c3 is ${c3}"
           echo "processing ${c3}..."
-          mv ${wd}/raw/${ii} ${wd}/raw/${c3}/
-          unzip -qq ${wd}/raw/${c3}/${ii} -d ${wd}/raw/${c3}
+          mv ${wd}/raw/${project}/${ii} ${wd}/raw/${project}/${c3}/
+          unzip -qq ${wd}/raw/${project}/${c3}/${ii} -d ${wd}/raw/${project}/${c3}
           echo "Extracted ${c3}"
         fi
       done < "$INDEX"
