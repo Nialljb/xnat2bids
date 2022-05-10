@@ -13,9 +13,9 @@ Usage() {
  v2.2 (July 2020)
  v2.3 (Oct 2021)
 
-usage:  bids_2_proc -i <project_ID> -c <config.json>
+usage:  bids_proc -i <project_ID> -c <config.json>
 
-e.g. bids_2_proc -i DREAM -c CIF_config.json
+e.g. bids_proc -i DREAM -c CIF_config.json
 
 * Check output from preproc step
 * Subjects should be labled by their CIF ID
@@ -54,22 +54,21 @@ dependencies=/rds/general/project/c3nl_shared/live/dependencies
 config=${dependencies}/${con}
 
 ### HARDCODED ###
-wd=/rds/general/project/c3nl_djs_working_dir/ephemeral
-mkdir -p ${wd}/${project}/sourcedata
-out=${wd}/${project}/sourcedata
+wd=/rds/general/project/c3nl_djs_imaging_data/live/data
+out=${wd}/sourcedata
 ### END EDIT ###
 
 echo "project is $project"
 echo "config is $config"
 
-cd ${wd}/${project}
+cd ${wd}/raw/${project}
 # Loop over data
-for subject in `ls -d ${wd}/${project}/raw/*/`;
+for subject in `ls -d ${wd}/raw/${project}/*/`;
     do
     sub=`basename $subject`
     echo "organising: $sub ... "
 
-    for session in `ls -d ${wd}/${project}/raw/${sub}/*/`; 
+    for session in `ls -d ${wd}/raw/${project}/${sub}/*/`; 
         do
         sesh=`basename $session`
         echo ""
@@ -77,18 +76,18 @@ for subject in `ls -d ${wd}/${project}/raw/*/`;
         echo ""
         DIR=${out}/sub-${sub}/ses-${sesh}/
 
-        for sequence in `ls -d ${wd}/${project}/raw/${sub}/${sesh}/scans/*`;
+        for sequence in `ls -d ${wd}/raw/${project}/${sub}/${sesh}/scans/*`;
             do
             scan=`basename $sequence`
-            mkdir -p ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/
+            mkdir -p ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/NIFTI/
             #mv ${wd}/${project}/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/* ${wd}/${project}/raw/${sub}/${sesh}/${scan}/DICOM/
             echo "scan is $scan"
-            FILE=`ls -f ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/*.nii`;
+            FILE=`ls -f ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/NIFTI/*.nii`;
             if [ -f "$FILE" ]; then
                 echo "$FILE already exists."
             else
                 echo "Converting ${scan} from DICOM ==> NIFTI..."
-                dcm2niix -o ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/ ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/ #
+                dcm2niix -o ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/NIFTI/ ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/DICOM/files/ #
             
             fi
             echo "Copying to source dir in BIDS format..."
@@ -104,13 +103,13 @@ for subject in `ls -d ${wd}/${project}/raw/*/`;
                     echo "${out}/sub-${sub}/ses-${sesh}/${dt}/${ml}/"
                     mkdir -p ${out}/sub-${sub}/ses-${sesh}/${dt}/${ml}/
 
-                    for scanData in `ls -f ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/`; 
+                    for scanData in `ls -f ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/NIFTI/`; 
                         do
                         sdata=`basename $scanData`
                         echo "sdata is $sdata"
                         suf=$(echo $sdata | cut -d'.' -f2,3)
                         echo "suf is $scanData"
-                        for im_files in `ls ${wd}/${project}/raw/${sub}/${sesh}/scans/${scan}/resources/NIFTI/*.${suf}`; 
+                        for im_files in `ls ${wd}/raw/${project}/${sub}/${sesh}/scans/${scan}/resources/NIFTI/*.${suf}`; 
                             do
                             cp ${im_files} ${out}/sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${cl}.${suf}
                             echo "output /sub-${sub}/ses-${sesh}/${dt}/${ml}/sub-${sub}_ses-${sesh}_${cl}.${suf}"        
@@ -120,11 +119,11 @@ for subject in `ls -d ${wd}/${project}/raw/*/`;
             done
             #continue
             #copy metaData
-            #cp ${wd}/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
+            #cp ${wd}/raw/${project}/${sub}/${sesh}/metaData* ${out}/sourcedata/sub-${sub}/ses-${sesh}/
             #fi
         done
     done
 done
 
 # Share the data love
-chmod -R +rwx ${out}/*
+chmod -R +777 ${out}/*
