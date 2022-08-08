@@ -4,7 +4,7 @@
 This is now a jupyer notebook that incorporates downloading from xnat, unziping files & curating into BIDS convention. The end result will be raw data under a project structure and currated data with a higher level structure as many participants are enrolled in multiple studies (sourcedata > CIFID > STUDYID)
 
 *Dependencies*
-- requires installation of py2.7 env 
+- requires installation of a python enviornment (env) with dependencies setup (py2.7/py3.5 tested) 
 - This env needs to have jupyter kernal setup
 - pyxnat package installed
 - jq installed (pip)
